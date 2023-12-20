@@ -238,10 +238,10 @@
 					$("#status").replaceWith(response.status);
 					$("#description").replaceWith(response.description);
 					if (response.status != "离线") {
-						document.title = "正在直播：" + response.description + " - 诸神小G's Live";
+						document.title = "正在直播：" + response.description + " - 少儿频道";
 						videoUrl = "http://hw-m-l.cztv.com/channels/lantian/channel008/1080p.m3u8"
 					} else {
-						videoUrl = "hd.mp4"
+						videoUrl = "http://hw-m-l.cztv.com/channels/lantian/channel008/1080p.m3u8"
 					}
 					return videoUrl
 				},
