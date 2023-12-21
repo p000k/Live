@@ -228,129 +228,129 @@
 		<script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/limonte-sweetalert2/11.4.4/sweetalert2.all.min.js">
 		</script>
 		<script type="text/javascript">
-			let videoUrl;
-			$.ajax({
-				type: "GET",
-				url: "https://s1.imlazy.ink:233/info.json",
-				async: false,
-				success: function(response) {
-					$("#livEstatus").css("background", response.status_color);
-					$("#status").replaceWith(response.status);
-					$("#description").replaceWith(response.description);
-					if (response.status != "离线") {
-						document.title = "正在直播：" + response.description + " - 金鹰卡通";
-						videoUrl = "http://101.33.17.11/liveplay-kk.rtxapp.com/live/program/live/jykt/1300000/mnf.m3u8"
-					} else {
-						videoUrl = "http://101.33.17.11/liveplay-kk.rtxapp.com/live/program/live/jykt/1300000/mnf.m3u8"
-					}
-					return videoUrl
-				},
-			});
-			const dp = new DPlayer({
-				container: document.getElementById("dplayer"),
-				live: true,
-				autoplay: false,
-				video: {
-					url: videoUrl,
-					type: "auto",
-				},
-				danmaku: true,
-			});
-			if (localStorage.getItem("accessToken") != "") {
-				$.ajax({
-					type: "POST",
-					url: "https://skin.fxcraft.cn/api/yggdrasil/authserver/validate",
-					contentType: "application/json",
-					dataType: "json",
-					data: JSON.stringify({
-						accessToken: localStorage.getItem("accessToken"),
-						clientToken: localStorage.getItem("clientToken"),
-					}),
-					success: function(data) {
-						mdui.snackbar({
-							message: "自动登录成功",
-							position: "right-top",
-						});
-						connectWs();
-						$(".login-top").replaceWith("<span id=loginnedname onclick=logOut()>" + localStorage.getItem("username") + "</span>");
-						mdui.mutation();
-						$(".loginned").replaceWith('<input type="text" id="comment" class="inputcontent" max="128" placeholder="输入后回车发送" onkeydown="keyup_submit(event);">')
-					},
-					error: function(errMsg) {
-						console.log(errMsg);
-						mdui.alert("令牌已过期或不存在，请重新登录", "登录失败")
-					},
-				})
-			}
-			function login() {
-				$.ajax({
-					type: "POST",
-					url: "https://skin.fxcraft.cn/api/yggdrasil/authserver/authenticate/",
-					contentType: "application/json",
-					dataType: "json",
-					data: JSON.stringify({
-						username: $("#username").val(),
-						password: $("#password").val(),
-					}),
-					success: function(sucMsg) {
-						console.log(sucMsg);
-						localStorage.setItem("username", sucMsg.selectedProfile.name);
-						localStorage.setItem("accessToken", sucMsg.accessToken);
-						localStorage.setItem("clientToken", sucMsg.clientToken);
-						mdui.snackbar({
-							message: "登录成功",
-							position: "right-top",
-						});
-						connectWs();
-						$(".login-top").replaceWith("<span id=loginnedname onclick=logOut()>" + sucMsg.selectedProfile.name + "</span>");
-						$(".loginned").replaceWith('<input type="text" id="comment" class="inputcontent" max="128" placeholder="输入后回车发送" onkeydown="keyup_submit(event);">')
-					},
-					error: function(errMsg) {
-						console.log(errMsg);
-						mdui.alert("请检查你的用户名和密码！", "登录失败")
-					},
-				})
-			}
-			function connectWs() {
-				var aT = localStorage.getItem("accessToken");
-				var cT = localStorage.getItem("clientToken");
-				ws = new WebSocket("ws://localhost:8848/?accessToken=" + aT + "&clientToken=" + cT);
-				ws.onerror = () = >{
-					mdui.alert("Websocket 连接失败！", "错误")
-				};
-				ws.onopen = () = >{
-					let data = {
-						"type": "setName",
-						"nickname": localStorage.getItem("username"),
-					};
-					ws.send(JSON.stringify(data))
-				};
-				ws.onmessage = (e) = >{
-					var ele = document.getElementById("content");
-					ele.scrollTop = ele.scrollHeight;
-					let data = JSON.parse(e.data);
-					if (data.type === "chatterList") {
-						let list = data.list;
-						let length = list.length;
-						document.getElementById("online").innerText = `$ {
-							length
-						}`
-					} else {
-						let message = data.message;
-						let oldContent = document.getElementById("content");
-						const JoinRoom = {
-							text: message,
-							color: "#fff",
-							type: "right",
-						};
-						dp.danmaku.draw(JoinRoom);
-						$("#content").prepend(createChatDiv(data))
-					}
-				};
-				ws.onclose = () = >{
-					mdui.alert("Websocket连接异常，聊天、弹幕功能将不可用！请刷新网页！", "错误")
-				}
-			}
+    let videoUrl;
+$.ajax({
+    type: "GET",
+    url: "https://s1.imlazy.ink:233/info.json",
+    async: false,
+    success: function(response) {
+        $("#livEstatus").css("background", response.status_color);
+        $("#status").replaceWith(response.status);
+        $("#description").replaceWith(response.description);
+        if (response.status != "离线") {
+            document.title = "正在直播：" + response.description + " - 金鹰卡通";
+            videoUrl = "http://101.33.17.11/liveplay-kk.rtxapp.com/live/program/live/jykt/1300000/mnf.m3u8"
+        } else {
+            videoUrl = "http://101.33.17.11/liveplay-kk.rtxapp.com/live/program/live/jykt/1300000/mnf.m3u8"
+        }
+        return videoUrl
+    },
+});
+const dp = new DPlayer({
+    container: document.getElementById("dplayer"),
+    live: true,
+    autoplay: false,
+    video: {
+        url: videoUrl,
+        type: "auto",
+    },
+    danmaku: true,
+});
+if (localStorage.getItem("accessToken") != "") {
+    $.ajax({
+        type: "POST",
+        url: "https://skin.fxcraft.cn/api/yggdrasil/authserver/validate",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify({
+            accessToken: localStorage.getItem("accessToken"),
+            clientToken: localStorage.getItem("clientToken"),
+        }),
+        success: function(data) {
+            mdui.snackbar({
+                message: "自动登录成功",
+                position: "right-top",
+            });
+            connectWs();
+            $(".login-top").replaceWith("<span id=loginnedname onclick=logOut()>" + localStorage.getItem("username") + "</span>");
+            mdui.mutation();
+            $(".loginned").replaceWith('<input type="text" id="comment" class="inputcontent" max="128" placeholder="输入后回车发送" onkeydown="keyup_submit(event);">')
+        },
+        error: function(errMsg) {
+            console.log(errMsg);
+            mdui.alert("令牌已过期或不存在，请重新登录", "登录失败")
+        },
+    })
+}
+
+function login() {
+    $.ajax({
+        type: "POST",
+        url: "https://skin.fxcraft.cn/api/yggdrasil/authserver/authenticate/",
+        contentType: "application/json",
+        dataType: "json",
+        data: JSON.stringify({
+            username: $("#username").val(),
+            password: $("#password").val(),
+        }),
+        success: function(sucMsg) {
+            console.log(sucMsg);
+            localStorage.setItem("username", sucMsg.selectedProfile.name);
+            localStorage.setItem("accessToken", sucMsg.accessToken);
+            localStorage.setItem("clientToken", sucMsg.clientToken);
+            mdui.snackbar({
+                message: "登录成功",
+                position: "right-top",
+            });
+            connectWs();
+            $(".login-top").replaceWith("<span id=loginnedname onclick=logOut()>" + sucMsg.selectedProfile.name + "</span>");
+            $(".loginned").replaceWith('<input type="text" id="comment" class="inputcontent" max="128" placeholder="输入后回车发送" onkeydown="keyup_submit(event);">')
+        },
+        error: function(errMsg) {
+            console.log(errMsg);
+            mdui.alert("请检查你的用户名和密码！", "登录失败")
+        },
+    })
+}
+
+function connectWs() {
+    var aT = localStorage.getItem("accessToken");
+    var cT = localStorage.getItem("clientToken");
+    ws = new WebSocket("ws://localhost:8848/?accessToken=" + aT + "&clientToken=" + cT);
+    ws.onerror = () => {
+        mdui.alert("Websocket 连接失败！", "错误")
+    };
+    ws.onopen = () => {
+        let data = {
+            "type": "setName",
+            "nickname": localStorage.getItem("username"),
+        };
+        ws.send(JSON.stringify(data))
+    };
+    ws.onmessage = (e) => {
+        var ele = document.getElementById("content");
+        ele.scrollTop = ele.scrollHeight;
+        let data = JSON.parse(e.data);
+        if (data.type === "chatterList") {
+            let list = data.list;
+            let length = list.length;
+            document.getElementById("online").innerText = `${length}`
+        } else {
+            let message = data.message;
+            let oldContent = document.getElementById("content");
+            const JoinRoom = {
+                text: message,
+                color: "#fff",
+                type: "right",
+            };
+            dp.danmaku.draw(JoinRoom);
+            $("#content").prepend(createChatDiv(data))
+        }
+    };
+    ws.onclose = () => {
+        mdui.alert("Websocket连接异常，聊天、弹幕功能将不可用！请刷新网页！", "错误")
+    }
+}
 		</script>
 		<script type="text/javascript" language="JavaScript">
 			let ws = null;
